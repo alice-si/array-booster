@@ -1,6 +1,8 @@
-var Client          = artifacts.require("./Client.sol");
-var InsertionSorter = artifacts.require("./InsertionSorter.sol");
 var _ = require("underscore");
+
+var InsertionSorter          = artifacts.require("./InsertionSorter.sol");
+var QuickSorter              = artifacts.require("./QuickSorter.sol");
+var Client                   = artifacts.require("./Client.sol");
 
 const DATA = {
   10: [3, 7, 4, 2, 1, 9, 8, 6, 5, 0],
@@ -13,7 +15,7 @@ const DATA = {
 contract('Sorter', function() {
 
   var checkSort = async function(client, data) {
-    var arr = _.range(0, data);
+    var arr = _.range(0, data.length);
     Promise.all(arr.map(async(i) => {
       arr[i] = await client.getElement.call(i);
     }));
@@ -28,35 +30,37 @@ contract('Sorter', function() {
     console.log("Gas [" + data.length + " elements]: " + tx.receipt.gasUsed);
   };
 
+  var testScenario = async function(sorter, data) {
+    let deployedSorter = await sorter.deployed();
+    Client.link("Sorter", deployedSorter.address);
+    let client = await Client.new();
+    sortData(client, data);
+    checkSort(client, data);
+  };
+
 
   it("should sort 10 elements with insertion Sort", async function() {
-    let client = await Client.new();
-    sortData(client, DATA[10]);
-    checkSort(client, DATA[10]);
+    testScenario(InsertionSorter, DATA[10]);
   });
 
   it("should sort 25 elements with insertion Sort", async function() {
-    let client = await Client.new();
-    sortData(client, DATA[25]);
-    checkSort(client, DATA[25]);
+    testScenario(InsertionSorter, DATA[10]);
   });
 
   it("should sort 50 elements with insertion Sort", async function() {
-    let client = await Client.new();
-    sortData(client, DATA[50]);
-    checkSort(client, DATA[50]);
+    testScenario(InsertionSorter, DATA[10]);
   });
 
   it("should sort 100 elements with insertion Sort", async function() {
-    let client = await Client.new();
-    sortData(client, DATA[100]);
-    checkSort(client, DATA[100]);
+    testScenario(InsertionSorter, DATA[10]);
   });
 
   it("should sort 200 elements with insertion Sort", async function() {
-    let client = await Client.new();
-    sortData(client, DATA[200]);
-    checkSort(client, DATA[200]);
+    testScenario(InsertionSorter, DATA[10]);
+  });
+
+  it("should sort 10 elements with Quick Sort", async function() {
+    testScenario(QuickSorter, DATA[10]);
   });
 
 });

@@ -1,6 +1,6 @@
 pragma solidity ^0.4.11;
 
-import "./InsertionSorter.sol";
+import "./Sorter.sol";
 
 contract Client {
 
@@ -15,7 +15,7 @@ contract Client {
   }
 
   function sort() {
-    InsertionSorter.sort(data);
+    Sorter.sort(data);
   }
 
 

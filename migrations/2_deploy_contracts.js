@@ -1,8 +1,7 @@
-var Sorter          = artifacts.require("./InsertionSorter.sol");
-var Client          = artifacts.require("./Client.sol");
+var InsertionSorter          = artifacts.require("./InsertionSorter.sol");
+var QuickSorter              = artifacts.require("./QuickSorter.sol");
 
 module.exports = function(deployer) {
-  deployer.deploy(Sorter);
-  deployer.link(Sorter, Client);
-  deployer.deploy(Client);
+  deployer.deploy(InsertionSorter);
+  deployer.deploy(QuickSorter);
 };
