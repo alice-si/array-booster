@@ -12,55 +12,77 @@ const DATA = {
   200: [936, 345, 292, 7, 637, 52, 437, 784, 694, 3, 366, 681, 58, 355, 602, 144, 328, 593, 681, 872, 555, 65, 565, 833, 416, 582, 371, 408, 267, 906, 678, 678, 760, 105, 827, 401, 747, 869, 434, 521, 388, 891, 450, 725, 411, 91, 102, 166, 606, 534, 311, 243, 900, 961, 823, 483, 972, 412, 241, 820, 184, 378, 987, 484, 495, 185, 554, 822, 585, 536, 597, 798, 295, 81, 507, 609, 747, 535, 747, 131, 872, 332, 890, 391, 507, 746, 774, 351, 878, 5, 129, 366, 916, 822, 18, 200, 526, 172, 301, 834, 760, 72, 225, 646, 931, 488, 362, 384, 226, 540, 906, 505, 702, 299, 546, 317, 339, 63, 386, 219, 47, 989, 778, 13, 414, 265, 964, 266, 612, 35, 143, 494, 502, 51, 547, 236, 582, 448, 595, 108, 735, 756, 265, 574, 856, 486, 431, 473, 595, 120, 319, 78, 362, 213, 566, 815, 217, 658, 967, 9, 608, 62, 620, 639, 243, 42, 924, 817, 675, 852, 862, 599, 458, 866, 591, 372, 707, 338, 241, 874, 282, 217, 629, 849, 430, 781, 442, 525, 619, 727, 75, 285, 998, 57, 1000, 316, 884, 536, 859, 772]
 };
 
-contract('Sorter', function() {
+contract('Soriting algorithms', function() {
 
-  var checkSort = async function(client, data) {
+  var checkSort = async function (client, data) {
     var arr = _.range(0, data.length);
     Promise.all(arr.map(async(i) => {
       arr[i] = await client.getElement.call(i);
     }));
     for (var i = 1; i < arr.length; i++) {
-      assert.ok([i] >= [i - 1], "Data isn't sorted correctly");
+      assert.ok(arr[i] >= arr[i - 1], "Data isn't sorted correctly");
     }
   };
 
-  var sortData = async function(client, data) {
+  var sortData = async function (client, data) {
     await client.setData(data);
     let tx = await client.sort();
     console.log("Gas [" + data.length + " elements]: " + tx.receipt.gasUsed);
   };
 
-  var testScenario = async function(sorter, data) {
+  var testScenario = async function (sorter, data) {
     let deployedSorter = await sorter.deployed();
     Client.link("Sorter", deployedSorter.address);
     let client = await Client.new();
-    sortData(client, data);
-    checkSort(client, data);
+    await sortData(client, data);
+    await checkSort(client, data);
   };
 
+  describe('Insertion Sort algorithm:', async function () {
 
-  it("should sort 10 elements with insertion Sort", async function() {
-    testScenario(InsertionSorter, DATA[10]);
+    it("should sort 10 elements with insertion Sort", async function () {
+      await testScenario(InsertionSorter, DATA[10]);
+    });
+
+    it("should sort 25 elements with insertion Sort", async function () {
+      await testScenario(InsertionSorter, DATA[25]);
+    });
+
+    it("should sort 50 elements with insertion Sort", async function () {
+      await testScenario(InsertionSorter, DATA[50]);
+    });
+
+    it("should sort 100 elements with insertion Sort", async function () {
+      await testScenario(InsertionSorter, DATA[100]);
+    });
+
+    it("should sort 200 elements with insertion Sort", async function () {
+      await testScenario(InsertionSorter, DATA[200]);
+    });
   });
 
-  it("should sort 25 elements with insertion Sort", async function() {
-    testScenario(InsertionSorter, DATA[10]);
-  });
+  describe('Quick Sort algorithm:', async function () {
 
-  it("should sort 50 elements with insertion Sort", async function() {
-    testScenario(InsertionSorter, DATA[10]);
-  });
+    it("should sort 10 elements with Quick Sort", async function () {
+      await testScenario(QuickSorter, DATA[10]);
+    });
 
-  it("should sort 100 elements with insertion Sort", async function() {
-    testScenario(InsertionSorter, DATA[10]);
-  });
+    it("should sort 25 elements with insertion Sort", async function () {
+      await testScenario(QuickSorter, DATA[25]);
+    });
 
-  it("should sort 200 elements with insertion Sort", async function() {
-    testScenario(InsertionSorter, DATA[10]);
-  });
+    it("should sort 50 elements with insertion Sort", async function () {
+      await testScenario(QuickSorter, DATA[50]);
+    });
 
-  it("should sort 10 elements with Quick Sort", async function() {
-    testScenario(QuickSorter, DATA[10]);
+    it("should sort 100 elements with insertion Sort", async function () {
+      await testScenario(QuickSorter, DATA[100]);
+    });
+
+    it("should sort 200 elements with insertion Sort", async function () {
+      await testScenario(QuickSorter, DATA[200]);
+    });
+
   });
 
 });
